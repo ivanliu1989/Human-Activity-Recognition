@@ -1,10 +1,16 @@
+# setup and load data
 setwd("/Users/ivan/Work_directory/Human-Activity-Recognition/")
+library(caret)
 train <- read.csv('data/pml-training.csv')
+# explore data
 summary(train)
 names(train)
-a <- sapply(1:length(names(train)), function(i, index=c()) {
-    ind <- 'class' %in% names(train)[i]
-    index <- c(index, ind)
-}
-)
-a
+str(train)
+# NA percents of each variable
+na_train <- sapply(1:length(names(train)), function(i, na_base=c()){
+    na_col <- mean(is.na(train[i]))
+    na_base <- c(na_base, na_col)})
+names(na_train) <- names(train)
+na_train <- sort(na_train,decreasing = T) 
+na_train
+# data imputation
