@@ -1,7 +1,8 @@
 # setup and load data
 setwd("/Users/ivan/Work_directory/Human-Activity-Recognition/")
 library(caret)
-train <- read.csv('data/pml-training.csv', stringsAsFactor=F)
+train <- read.table('data/pml-training.csv', stringsAsFactor=F, sep=','
+                    ,header = T,na.strings = c("NA",""))
 # explore data
 summary(train)
 names(train)
@@ -12,9 +13,9 @@ na_train <- sapply(1:length(names(train)), function(i, na_base=c()){
     na_col <- mean(is.na(train[i]))
     na_base <- c(na_base, na_col)})
 names(na_train) <- names(train)
-na_train <- sort(na_train,decreasing = T)
-na_index <- na_train > .5
-train2 <- train[,-na_index]
+    # na_train <- sort(na_train,decreasing = T)
+na_index <- na_train < .5
+train2 <- train[,na_index]
 # non zero variable
 nzv <- nearZeroVar(train2,saveMetrics = F)
 training <- train2[,-nzv]
