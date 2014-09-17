@@ -15,8 +15,9 @@ names(na_train) <- names(train)
 na_train <- sort(na_train,decreasing = T) 
 train2 <- na.omit(train)
 # non zero variable
-nzv <- nearZeroVar(train2,saveMetrics = T,uniqueCut = 1)
-nzv[1:10,]
-training <- train[,-nzv]
+nzv <- nearZeroVar(train2,saveMetrics = T)
+nzv
+training <- train2[,-nzv]
+dim(train2)
 head(training)
 # split train and test
