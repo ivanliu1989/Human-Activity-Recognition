@@ -19,13 +19,12 @@ train2 <- train[,na_index]
 # non zero variable
 nzv <- nearZeroVar(train2,saveMetrics = F)
 training <- train2[,-nzv]
-dim(train2)
 dim(training)
 # split train and test
 
 # run the model
 set.seed(888)
-fitControl <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
+fitControl <- trainControl(method = "cv", number = 10)
 gbmGrid <-  expand.grid(interaction.depth = c(1, 5, 9), n.trees = (1:30)*50, shrinkage = 0.1)
 fit<- train(classe~., data=training, method = 'gbm', trControl=fitControl, tuneGrid = gbmGrid)
 pred <- predict(fit, training)
