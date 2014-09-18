@@ -30,6 +30,8 @@ gbmGrid <-  expand.grid(interaction.depth = 5, n.trees = 300, shrinkage = 0.1)
 fit<- train(as.factor(classe)~., data=training, method = 'gbm', trControl=fitControl, tuneGrid = gbmGrid)
 pred <- predict(fit, training)
 result <- confusionMatrix(pred, training$classe)
+gbmImp <- varImp(fit,scale=F)
+plot(gbmImp, top=20)
 
 # test on test dataset
 test <- read.table('data/pml-testing.csv', stringsAsFactor=F, sep=','
