@@ -24,8 +24,16 @@ dim(training)
 
 # run the model
 set.seed(888)
-fitControl <- trainControl(method = "cv", number = 10)
-gbmGrid <-  expand.grid(interaction.depth = c(1, 5, 9), n.trees = (1:10)*50, shrinkage = 0.1)
-fit<- train(classe~., data=training, method = 'gbm', trControl=fitControl, tuneGrid = gbmGrid)
+# classProbs=TRUE, savePred=T, 
+fitControl <- trainControl(method = "cv",number = 10)
+gbmGrid <-  expand.grid(interaction.depth = 5, n.trees = 300, shrinkage = 0.1)
+fit<- train(as.factor(classe)~., data=training, method = 'gbm', trControl=fitControl, tuneGrid = gbmGrid)
 pred <- predict(fit, training)
 result <- confusionMatrix(pred, training$classe)
+
+# test on test dataset
+test <- read.table('data/pml-testing.csv', stringsAsFactor=F, sep=','
+                    ,header = T,na.strings = c("NA",""))
+test2 <- test[,na_index]
+testing <- test2[,-nzv]
+pred_test <- predict(fit, newdata=test)
