@@ -6,6 +6,11 @@ output: html_document
 ---
 
 #### Executive Summary
+
+Human Activity Recognition - HAR - has emerged as a key research area in the last years and is gaining increasing attention by the pervasive computing research community, especially for the development of context-aware systems. There are many potential applications for HAR, like: elderly monitoring, life log systems for monitoring energy expenditure and for supporting weight-loss programs, and digital assistants for weight lifting exercises.
+
+The objective of this report is to establish a classfier to predict different classe types based on data collected from mobile devices.
+
 ```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE}
 setwd("/Users/ivan/Work_directory/Human-Activity-Recognition/")
 library(caret)
@@ -14,7 +19,13 @@ library(caret)
 ---
 
 #### Data Exploration and Cleaning
+First of all, we need to do some data exploration works and clean the datasets. 
+Here we detect the null values of each variable and find there are a bunch of columns have over 95% NA values which is too big to make the imputation. So we decide to delete those columns directly.
+Then we also test the non zero vairable and delete the Id and usernames columns which we think are meaningless to the model.
+At last we get a clean training set which contains 19622 observations and 57 variables for modeling task.
+
 ```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE}
+# load data
 train <- read.table('data/pml-training.csv', stringsAsFactor=F, sep=','
                     ,header = T,na.strings = c("NA",""))
 # detect the NA percent of each column
@@ -35,11 +46,13 @@ dim(training)
 ---
 
 #### Modeling
+In modeling step, we choose gbm
+
 ```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE}
 set.seed(888)
 fitControl <- trainControl(method = "cv",number = 10)
 gbmGrid <-  expand.grid(interaction.depth = 5, n.trees = 300, shrinkage = 0.1)
-fit<- train(as.factor(classe)~., data=training, method = 'gbm', trControl=fitControl, tuneGrid = gbmGrid)
+fit<- train(as.factor(classe)~., data=training, method = 'gbm', trControl=fitControl, tuneGrid = gbmGrid, verbose=F)
 pred <- predict(fit, training)
 result <- confusionMatrix(pred, training$classe)
 gbmImp <- varImp(fit,scale=F)
