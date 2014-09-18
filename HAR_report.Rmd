@@ -1,0 +1,8 @@
+---
+title: "Human Activity Recognition"
+author: "Tianxiang(Ivan) Liu"
+date: "18 September 2014"
+output: html_document
+---
+
+
