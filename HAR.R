@@ -16,6 +16,7 @@ names(na_train) <- names(train)
     # na_train <- sort(na_train,decreasing = T)
 na_index <- na_train < .5
 train2 <- train[,na_index]
+train2 <- train2[,-c(1, 2)]
 # non zero variable
 nzv <- nearZeroVar(train2,saveMetrics = F)
 training <- train2[,-nzv]
