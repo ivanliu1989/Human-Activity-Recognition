@@ -6,40 +6,64 @@ output: html_document
 ---
 
 #### Executive Summary
-
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE}
+setwd("/Users/ivan/Work_directory/Human-Activity-Recognition/")
+library(caret)
+```
 
 ---
 
 #### Data Exploration and Cleaning
-```{r}
-
+```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE}
+train <- read.table('data/pml-training.csv', stringsAsFactor=F, sep=','
+                    ,header = T,na.strings = c("NA",""))
+# detect the NA percent of each column
+na_train <- sapply(1:length(names(train)), function(i, na_base=c()){
+    na_col <- mean(is.na(train[i]))
+    na_base <- c(na_base, na_col)})
+names(na_train) <- names(train)
+# eliminate the column with over 50% NA value
+na_index <- na_train < .5
+train2 <- train[,na_index]
+train2 <- train2[,-c(1, 2)]
+# non zero variable
+nzv <- nearZeroVar(train2,saveMetrics = F)
+training <- train2[,-nzv]
+dim(training)
 ```
 
 ---
 
 #### Modeling
-```{r}
-
+```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE}
+set.seed(888)
+fitControl <- trainControl(method = "cv",number = 10)
+gbmGrid <-  expand.grid(interaction.depth = 5, n.trees = 300, shrinkage = 0.1)
+fit<- train(as.factor(classe)~., data=training, method = 'gbm', trControl=fitControl, tuneGrid = gbmGrid)
+pred <- predict(fit, training)
+result <- confusionMatrix(pred, training$classe)
+gbmImp <- varImp(fit,scale=F)
+plot(gbmImp, top=20)
 ```
 
 ---
 
 #### Prediction
-```{r}
+```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE}
 
 ```
 
 ---
 
 #### Out of Sample Error
-```{r}
+```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE}
 
 ```
 
 ---
 
 #### Error Appropriately with Cross Validation
-```{r}
+```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE}
 
 ```
 
