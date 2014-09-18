@@ -5,4 +5,49 @@ date: "18 September 2014"
 output: html_document
 ---
 
+#### Executive Summary
 
+
+---
+
+#### Data Exploration and Cleaning
+```{r}
+
+```
+
+---
+
+#### Modeling
+```{r}
+
+```
+
+---
+
+#### Prediction
+```{r}
+
+```
+
+---
+
+#### Out of Sample Error
+```{r}
+
+```
+
+---
+
+#### Error Appropriately with Cross Validation
+```{r}
+
+```
+
+---
+
+#### Conclusion
+
+---
+
+Thank you for reading!
+Tianxiang Liu
