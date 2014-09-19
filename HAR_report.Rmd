@@ -46,9 +46,11 @@ dim(training)
 ---
 
 #### Modeling
-In modeling step, we choose gbm
+Then, we choose gbm with cross validation to do the modeling work. So we can avoid the overfitting problem to some extent. 
+After modeling, we first apply our model to training set and we can see the confusion matrix has revealed that the model can perfectly classify all five classes based on training dataset. The sensitivity and specificity for all classes are 100%. For now, the classifer looks prety good. 
+Following plot also indicates the top 10 important variables to predict different classes of users.
 
-```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE}
+```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE,fig.height=6, fig.width=8}
 set.seed(888)
 fitControl <- trainControl(method = "cv",number = 10)
 gbmGrid <-  expand.grid(interaction.depth = 5, n.trees = 300, shrinkage = 0.1)
@@ -56,14 +58,25 @@ fit<- train(as.factor(classe)~., data=training, method = 'gbm', trControl=fitCon
 pred <- predict(fit, training)
 result <- confusionMatrix(pred, training$classe)
 gbmImp <- varImp(fit,scale=F)
-plot(gbmImp, top=20)
+result
+plot(gbmImp, top=10)
 ```
 
 ---
 
 #### Prediction
-```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE}
+After test the model on training data. Then we will apply the classifier to test datasets.
+First, we load the test dataset and do the exactly same preprocess works as we've done on training dataset. Then we apply the classifier on it and get the results as following. 
 
+```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE}
+test <- read.table('data/pml-testing.csv', stringsAsFactor=F, sep=','
+                    ,header = T,na.strings = c("NA",""))
+test2 <- test[,na_index]
+testing <- test2[,-nzv]
+pred_test <- predict(fit, newdata=test)
+results <- data.frame(test$problem_id, test$user_name, pred_test)
+names(results) <- c('Problem_id','User_name','Classe')
+results
 ```
 
 ---

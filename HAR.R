@@ -32,11 +32,14 @@ fit<- train(as.factor(classe)~., data=training, method = 'gbm', trControl=fitCon
 pred <- predict(fit, training)
 result <- confusionMatrix(pred, training$classe)
 gbmImp <- varImp(fit,scale=F)
-plot(gbmImp, top=20)
+plot(gbmImp, top=10)
 
 # test on test dataset
 test <- read.table('data/pml-testing.csv', stringsAsFactor=F, sep=','
                     ,header = T,na.strings = c("NA",""))
 test2 <- test[,na_index]
 testing <- test2[,-nzv]
-pred_test <- predict(fit, newdata=test)
+pred_test <- predict(fit, newdata=testing)
+results <- data.frame(test$problem_id, test$user_name, pred_test)
+names(results) <- c('Problem_id','User_name','Classe')
+results
