@@ -22,24 +22,29 @@ nzv <- nearZeroVar(train2,saveMetrics = F)
 training <- train2[,-nzv]
 dim(training)
 # split train and test
-
+index <- createDataPartition(train$classe, p=0.8, list=F)
+training <- training[index,]
+testing <- testing[-index,]
 # run the model
 set.seed(888)
 # classProbs=TRUE, savePred=T, 
 fitControl <- trainControl(method = "cv",number = 10)
 gbmGrid <-  expand.grid(interaction.depth = 5, n.trees = 300, shrinkage = 0.1)
 fit<- train(as.factor(classe)~., data=training, method = 'gbm', trControl=fitControl, tuneGrid = gbmGrid)
-pred <- predict(fit, training)
-result <- confusionMatrix(pred, training$classe)
 gbmImp <- varImp(fit,scale=F)
 plot(gbmImp, top=10)
 
+# Out of sample error
+pred <- predict(fit, training)
+result <- confusionMatrix(pred, training$classe)
+pred_t <- predict(fit, testing)
+result <- confusionMatrix(pred_t, testing$classe)
 # test on test dataset
 test <- read.table('data/pml-testing.csv', stringsAsFactor=F, sep=','
                     ,header = T,na.strings = c("NA",""))
-test2 <- test[,na_index]
-testing <- test2[,-nzv]
-pred_test <- predict(fit, newdata=testing)
+# test2 <- test[,na_index]
+# testing <- test2[,-nzv]
+pred_test <- predict(fit, newdata=test)
 results <- data.frame(test$problem_id, test$user_name, pred_test)
 names(results) <- c('Problem_id','User_name','Classe')
 results

@@ -47,11 +47,17 @@ dim(training)
 
 #### Modeling
 Then, we choose gbm with cross validation to do the modeling work. So we can avoid the overfitting problem to some extent. 
+We also split the raw datasets into training and testing parts so we can measure the out of sample error later.
 After modeling, we first apply our model to training set and we can see the confusion matrix has revealed that the model can perfectly classify all five classes based on training dataset. The sensitivity and specificity for all classes are 100%. For now, the classifer looks prety good. 
 Following plot also indicates the top 10 important variables to predict different classes of users.
 
 ```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE,fig.height=6, fig.width=8}
 set.seed(888)
+# split train and test
+index <- createDataPartition(train$classe, p=0.8, list=F)
+training <- training[index,]
+testing <- testing[-index,]
+# modeling
 fitControl <- trainControl(method = "cv",number = 10)
 gbmGrid <-  expand.grid(interaction.depth = 5, n.trees = 300, shrinkage = 0.1)
 fit<- train(as.factor(classe)~., data=training, method = 'gbm', trControl=fitControl, tuneGrid = gbmGrid, verbose=F)
@@ -60,6 +66,13 @@ result <- confusionMatrix(pred, training$classe)
 gbmImp <- varImp(fit,scale=F)
 result
 plot(gbmImp, top=10)
+```
+
+---
+
+#### Out of Sample Error
+```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE}
+pred
 ```
 
 ---
@@ -77,13 +90,6 @@ pred_test <- predict(fit, newdata=test)
 results <- data.frame(test$problem_id, test$user_name, pred_test)
 names(results) <- c('Problem_id','User_name','Classe')
 results
-```
-
----
-
-#### Out of Sample Error
-```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE}
-
 ```
 
 ---
