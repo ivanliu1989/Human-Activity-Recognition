@@ -51,7 +51,7 @@ We also split the raw datasets into training and testing parts so we can measure
 After modeling, we first apply our model to training set and we can see the confusion matrix has revealed that the model can perfectly classify all five classes based on training dataset. The sensitivity and specificity for all classes are 100%. For now, the classifer looks prety good. 
 Following plot also indicates the top 10 important variables to predict different classes of users.
 
-```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE,fig.height=6, fig.width=8}
+```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE,fig.height=3, fig.width=6}
 set.seed(888)
 # split train and test
 index <- createDataPartition(training$classe, p=0.8, list=F)
@@ -60,7 +60,7 @@ test_md <- training[-index,]
 # modeling
 fitControl <- trainControl(method = "cv",number = 10)
 gbmGrid <-  expand.grid(interaction.depth = 5, n.trees = 300, shrinkage = 0.1)
-fit<- train(as.factor(classe)~., data=train_md, method = 'gbm', trControl=fitControl, tuneGrid = gbmGrid)
+fit<- train(as.factor(classe)~., data=train_md, method = 'gbm', trControl=fitControl, tuneGrid = gbmGrid, verbose=F)
 gbmImp <- varImp(fit,scale=F)
 plot(gbmImp, top=10)
 ```
@@ -68,12 +68,20 @@ plot(gbmImp, top=10)
 ---
 
 #### Out of Sample Error
+Here we can compare the differences between in sample error and out of sample error. The report results are from known and unknown datasets to our model. 
+From confusionMatrix function, we find when we apply the model to a new dataset, there are 5 wrong predictions apear in Class B and C. and the accuracy decrease slightly to 99.87%. So we expect the out of sample error to be around 0.04% to 0.3%.
+We also trianed a model without cross validation which results in a higher out-of-sample-error.
+So we can conclude that cross validation can help overfitting to some extent because the out-of-sample-error of our model is lower than the model without cross validation. 
+Following is the results of our model.
+
 ```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE}
 pred <- predict(fit, train_md)
 result <- confusionMatrix(pred, train_md$classe)
 pred_t <- predict(fit, test_md)
 result_t <- confusionMatrix(pred_t, test_md$classe)
+result_t
 ```
+
 
 ---
 
@@ -91,17 +99,6 @@ results <- data.frame(test$problem_id, test$user_name, pred_test)
 names(results) <- c('Problem_id','User_name','Classe')
 results
 ```
-
----
-
-#### Error Appropriately with Cross Validation
-```{r, echo=TRUE,warning=FALSE,message=FALSE,error=FALSE}
-
-```
-
----
-
-#### Conclusion
 
 ---
 
