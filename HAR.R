@@ -48,7 +48,7 @@ test <- read.table('data/pml-testing.csv', stringsAsFactor=F, sep=','
 pred_test <- predict(fit, newdata=test)
 results <- data.frame(test$problem_id, test$user_name, pred_test)
 names(results) <- c('Problem_id','User_name','Classe')
-results
+results <- results[,2]
 
 # write answers
 pml_write_files = function(x){
