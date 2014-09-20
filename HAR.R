@@ -49,3 +49,13 @@ pred_test <- predict(fit, newdata=test)
 results <- data.frame(test$problem_id, test$user_name, pred_test)
 names(results) <- c('Problem_id','User_name','Classe')
 results
+
+# write answers
+pml_write_files = function(x){
+    n = length(x)
+    for(i in 1:n){
+        filename = paste0("problem_id_",i,".txt")
+        write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+    }
+}
+pml_write_files(results)
