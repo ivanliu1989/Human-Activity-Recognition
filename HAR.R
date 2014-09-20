@@ -29,7 +29,7 @@ test_md <- training[-index,]
 set.seed(888)
 # classProbs=TRUE, savePred=T, 
 fitControl <- trainControl(method = "cv",number = 10)
-fitControl <- trainControl(method = "none")
+# fitControl <- trainControl(method = "none")
 gbmGrid <-  expand.grid(interaction.depth = 5, n.trees = 300, shrinkage = 0.1)
 fit<- train(as.factor(classe)~., data=train_md, method = 'gbm', trControl=fitControl, tuneGrid = gbmGrid)
 gbmImp <- varImp(fit,scale=F)
